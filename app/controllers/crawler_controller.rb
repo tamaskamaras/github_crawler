@@ -1,9 +1,20 @@
 class CrawlerController < ApplicationController
 
 	def index
-		pp Github.repos.list(user: 'rails').body
-		pp Github.repos.list(user: 'rails').body.count
-		render json:  { 'repos' => '' }
+		github = Github.new
+		# files = github.pull_requests.files(user: 'rails', repo: 'rails', number: 36200)
+
+		result = []
+		github
+		.pull_requests
+		.list(user: 'rails', repo: 'rails') do |pull_request|
+			result << github.pull_requests.files(
+				user: 'rails',
+				repo: 'rails',
+				number: pull_request['number']
+				)
+		end
+		render json: { response: result }
 	end
 
 end
