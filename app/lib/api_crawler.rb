@@ -13,7 +13,6 @@ class ApiCrawler
 		github_client
 		.pull_requests
 		.list(user: user, repo: repo) do |pull_request|
-
 			file_attributes = {}
 			github_client
 			.pull_requests
@@ -26,7 +25,6 @@ class ApiCrawler
 				else
 				  file_attributes[ file['filename'] ][:patches] << file['patch'][/\A@@ (.*) @@/, 1]
 				end
-
 			end
 			if file_urls = redundant_file_urls(file_attributes)
 				result.merge({ [ pull_request['url'] ] => file_urls })
@@ -35,7 +33,15 @@ class ApiCrawler
 		result
 	end
 
-	def redundant_file_urls
+	def redundant_file_urls file_attributes
+		result = []
+		file_attributes.each do |filename, attributes|
+			if (line_numbers = attributes[:patches]).length > 1
+				line_numbers.each do |lineno|
+				end
+			end
+		end
+		result
 	end
 
 end

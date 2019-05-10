@@ -7,7 +7,6 @@ class CrawlerController < ApplicationController
 		.pull_requests
 		.list(user: 'rails', repo: 'rails') do |pull_request|
 			result = {}
-			# commits = github.pull_requests.commits(user: 'rails', repo: 'rails', number: pull_request['number'])
 			github.pull_requests.files(
 				user: 'rails',
 				repo: 'rails',
