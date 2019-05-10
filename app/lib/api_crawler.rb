@@ -1,4 +1,4 @@
-class ApiCrawler
+module ApiCrawler
 
 	attr_reader user, repo, github_client
 
@@ -38,6 +38,7 @@ class ApiCrawler
 		file_attributes.each do |filename, attributes|
 			if (line_numbers = attributes[:patches]).length > 1
 				line_numbers.each do |lineno|
+					lineno[/\A-(.*) /, 1].split(',')
 				end
 			end
 		end
