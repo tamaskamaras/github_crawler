@@ -1,11 +1,11 @@
-module ApiCrawler
+class ApiCrawler
 
-	attr_reader user, repo, github_client
+	attr_reader :user, :repo, :github_client
 
-	def initializer user, repo
-		@user 				 = user
-		@repo 				 = repo
-		@github_client = Github.new
+	def initialize attributes
+		@user 				 = attributes[:user]
+		@repo 				 = attributes[:repo]
+		@github_client = Github.new(basic_auth: "#{attributes[:login]}:#{attributes[:password]}")
 	end
 
 	def filtered_pull_request
