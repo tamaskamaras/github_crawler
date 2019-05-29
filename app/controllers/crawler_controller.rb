@@ -7,7 +7,7 @@ class CrawlerController < ApplicationController
       login:    params[:login],
       password: params[:password]
     ).filtered_pull_request
-    render json: { response: result }
+    render json: { redundancy: result }
 	end
 
   def filter_params

@@ -10,21 +10,14 @@ class ApiCrawler
 
 	def filtered_pull_request
 		result = {}
-		github_client
-		.pull_requests
-		.list(user: user, repo: repo) do |pull_request|
+		pull_requests do |pull_request|
 			file_attributes = {}
-			github_client
-			.pull_requests
-			.files(user: user, repo: repo, number: pull_request['number']).each do |file|
-				unless file_attributes[ file['filename'] ]
-				  file_attributes[ file['filename'] ] = {
-				  	blob_url: file['blob_url'],
-				  	patches:  [ file['patch'][/\A@@ (.*) @@/, 1] ], 
-				  }
-				else
-				  file_attributes[ file['filename'] ][:patches] << file['patch'][/\A@@ (.*) @@/, 1]
-				end
+      pull_request_files(pull_request['number']) do |file|
+				file_name = file['filename']
+        (file_attributes[file_name] || file_attributes[file_name] = {
+          blob_url: file['blob_url'],
+          patches:  []
+        })[:patches] << file['patch'][/\A@@ (.*) @@/, 1]
 			end
 			if file_urls = redundant_file_urls(file_attributes)
 				result.merge({ [ pull_request['url'] ] => file_urls })
@@ -32,6 +25,22 @@ class ApiCrawler
 		end
 		result
 	end
+
+  def pull_requests
+    github_client.pull_requests.list(user: user, repo: repo) do |pull_request|
+      yield(pull_request)
+    end
+  end
+
+  def pull_request_files pull_request_number
+    github_client.pull_requests.files(
+      user:   user,
+      repo:   repo,
+      number: pull_request_number
+    ).each do |file|
+      yield(file)
+    end
+  end
 
 	def redundant_file_urls file_attributes
 		result = []
