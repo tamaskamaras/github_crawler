@@ -19,8 +19,8 @@ class ApiCrawler
           line_ranges:  []
         })[:line_ranges].concat( patchs_to_ranges( file['patch'] ) )
       end
-      if file_urls = redundant_file_urls(file_attributes)
-        result.merge({ [ pull_request['url'] ] => file_urls })
+      if ( file_urls = redundant_file_urls(file_attributes) ).present?
+        result.merge!({ pull_request['html_url'] => file_urls })
       end
     end
     result
@@ -45,22 +45,36 @@ class ApiCrawler
   def patchs_to_ranges patches
     patches.split(%r{@@ -}).map do |patch|
       if raw_range = patch[/\A\d+,\d+/]&.split(',')
-        start = raw_range[0].to_i
-        Range.new(start, start + raw_range[1].to_i)
+        Range.new(
+          (start = raw_range[0].to_i),
+          start + raw_range[1].to_i
+        )
       end
     end.compact
   end
 
   def redundant_file_urls file_attributes
     file_attributes.inject([]) do |file_urls, (file_path, attributes)|
-      file_urls << attributes[:blob_url] if overlap_ranges( attributes[:line_ranges] )
-      file_urls
+      if (ranges = attributes[:line_ranges]).length > 1 && overlap_ranges(ranges)
+        file_urls << attributes[:blob_url]
+      else
+        file_urls
+      end
     end
   end
 
   def overlap_ranges ranges
-    ranges.inject([]) do |line_ranges, line_range|
-    end if ranges.length > 1
+    overlaping = false
+    ranges.each_with_index do |comparing_range, comparing_index|
+      ranges.each_with_index do |compared_range, compared_index|
+        overlaping = overlaping || (
+          comparing_index != compared_index &&
+          comparing_range.size > 1 &&
+          comparing_range.overlaps?(compared_range)
+        )
+      end
+    end
+    overlaping
   end
 
 end
