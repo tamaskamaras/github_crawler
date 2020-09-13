@@ -18,18 +18,7 @@ http://localhost:3000/?user=rails;repo=rails
 
 ## Authentication
 
-For public repos GitHub allows unauthenticated queries but you can easily run into the rate limit problem that can prevent you to get the required data you need. GitHub Crawler is flexible in terms of authentication (it is not mandatory to provide credentials) but it is highly recommended to do so. You can easily get around the rate limit problem by complementing the above-described GET request with two more keys:
-
-Your GitHub
-
-- login and
-- password
-
-```sh
-http://localhost:3000/?user=rails;repo=rails;login=LoginName;password=YourSuperSecretPassword
-```
-
-These sensitive user data are not stored in the application but directly forwarded to the GitHub Api!
+For public repos GitHub allows unauthenticated queries but you can easily run into the rate limit problem that can prevent you to get the required data you need. GitHub Crawler is flexible in terms of authentication (it is not mandatory to provide credentials) but it is highly recommended to do so.
 
 ## Result
 
@@ -37,7 +26,7 @@ Upon the correctly created request, you will get the response in `Json` format t
 
 ## Technology
 
-Thanks to GitHub a fully documented Api is available for us via which we can query a wide range of data for further use. If it would not be enough Ruby developer [Piotr Murach](https://github.com/piotrmurach) created a faithful interface for the above mentioned GitHub Api in the form of [Ruby gem](https://github.com/piotrmurach/github) that supports all the api methods of the official GitHub Api.
+Thanks to GitHub a fully documented Api is available for us via which we can query a wide range of data for further use. If it would not be enough Ruby developer [Piotr Murach](https://github.com/piotrmurach) created a faithful interface for the above mentioned GitHub Api in the form of a [Ruby gem](https://github.com/piotrmurach/github) that supports all the api methods of the official GitHub Api.
 
 GitHub Crawler is based on this gem.
 
